@@ -10,7 +10,11 @@ import java.util.concurrent.Executors;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 
-import com.axisdesktop.crawler.impl.AxisWorker;
+import com.axisdesktop.crawler.entity.Provider;
+import com.axisdesktop.crawler.entity.ProviderDataType;
+import com.axisdesktop.crawler.entity.ProviderStatus;
+import com.axisdesktop.crawler.entity.ProviderUrl;
+import com.axisdesktop.crawler.entity.ProviderUrlStatus;
 
 public abstract class Crawler {
 	private Properties properties;
@@ -18,12 +22,17 @@ public abstract class Crawler {
 
 	protected final SessionFactory buildSessionFactory( Properties props ) {
 		this.factory = new Configuration() //
-				.setProperty( "hibernate.connection.driver_class", "org.postgresql.Driver" ) //
-				.setProperty( "hibernate.dialect", "org.hibernate.dialect.PostgreSQLDialect" ) //
+//				.setProperty( "hibernate.connection.driver_class", "org.postgresql.Driver" ) //
+				.setProperty( "hibernate.dialect", props.getProperty( "db.dialect", "" ) ) //
 				.setProperty( "hibernate.connection.url", props.getProperty( "db.url" ) ) //
 				.setProperty( "hibernate.connection.username", props.getProperty( "db.user" ) ) //
 				.setProperty( "hibernate.connection.password", props.getProperty( "db.password" ) ) //
-				.setProperty( "hibernate.default_schema", props.getProperty( "db.schema" ) ) //
+				.setProperty( "hibernate.default_schema", props.getProperty( "db.schema", "" ) ) //
+				.addAnnotatedClass(Provider.class) //
+				.addAnnotatedClass(ProviderStatus.class) //
+				.addAnnotatedClass(ProviderUrl.class) //
+				.addAnnotatedClass(ProviderUrlStatus.class) //
+				.addAnnotatedClass(ProviderDataType.class) //
 				.buildSessionFactory();
 		return this.factory;
 	}
