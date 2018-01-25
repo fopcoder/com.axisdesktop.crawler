@@ -10,6 +10,11 @@ import java.util.concurrent.Executors;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 
+import com.axisdesktop.crawler.entity.Provider;
+import com.axisdesktop.crawler.entity.ProviderDataType;
+import com.axisdesktop.crawler.entity.ProviderStatus;
+import com.axisdesktop.crawler.entity.ProviderUrl;
+import com.axisdesktop.crawler.entity.ProviderUrlStatus;
 import com.axisdesktop.crawler.impl.AxisWorker;
 
 public abstract class Crawler {
@@ -24,6 +29,11 @@ public abstract class Crawler {
 				.setProperty( "hibernate.connection.username", props.getProperty( "db.user" ) ) //
 				.setProperty( "hibernate.connection.password", props.getProperty( "db.password" ) ) //
 				.setProperty( "hibernate.default_schema", props.getProperty( "db.schema" ) ) //
+				.addAnnotatedClass( Provider.class ) //
+				.addAnnotatedClass( ProviderStatus.class ) //
+				.addAnnotatedClass( ProviderUrl.class ) //
+				.addAnnotatedClass( ProviderUrlStatus.class ) //
+				.addAnnotatedClass( ProviderDataType.class ) //
 				.buildSessionFactory();
 		return this.factory;
 	}

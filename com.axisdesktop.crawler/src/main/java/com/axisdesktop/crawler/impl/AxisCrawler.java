@@ -11,6 +11,7 @@ import org.hibernate.query.Query;
 import com.axisdesktop.crawler.base.Crawler;
 import com.axisdesktop.crawler.base.Queue;
 import com.axisdesktop.crawler.base.Worker;
+import com.axisdesktop.crawler.entity.Provider;
 
 public class AxisCrawler extends Crawler {
 	private Queue queue;
@@ -28,6 +29,10 @@ public class AxisCrawler extends Crawler {
 
 		Session ses = this.getSessionFactory().openSession();
 		Transaction tx = ses.beginTransaction();
+
+		Provider prov = ses.load( Provider.class, 2 );
+
+		System.out.println( prov );
 
 		String sql = "SELECT * FROM {h-schema}provider";
 		// SQLQuery query = ses.createSQLQuery( sql );
