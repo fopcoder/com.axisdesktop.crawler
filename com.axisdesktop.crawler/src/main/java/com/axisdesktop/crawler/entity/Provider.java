@@ -1,62 +1,50 @@
 package com.axisdesktop.crawler.entity;
 
-import java.util.Set;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
 import com.axisdesktop.base.db.entity.SimpleEntity;
 
 @Entity
-@Table( name = "provider" )
+@Table( name = "provider", //
+		uniqueConstraints = { @UniqueConstraint( columnNames = "name", name = "uk_provider_name" ) } //
+)
+@NamedQueries( { @NamedQuery( name = "Provider.getByName", query = "SELECT p FROM Provider p WHERE name = :name" ) } )
 public class Provider extends SimpleEntity<Integer> {
 
-	@Column( name = "status_id" )
-	private int statusId;
+	@Column( name = "status_id", nullable = false )
+	private ProviderStatus statusId;
 
-	@ManyToOne( fetch = FetchType.LAZY )
-	@JoinColumn( name = "status_id", insertable = false, updatable = false )
-	private ProviderStatus status;
+	// @OneToMany( fetch = FetchType.LAZY, mappedBy = "providerId" )
+	// private Set<ProviderUrl> providerUrl;
 
-	@OneToMany( fetch = FetchType.LAZY, mappedBy = "providerId" )
-	private Set<ProviderUrl> providerUrl;
+	public Provider() {
+	}
 
-	public int getStatusId() {
+	public Provider( String name, ProviderStatus statusId ) {
+		this.setName( name );
+		this.statusId = statusId;
+	}
+
+	public ProviderStatus getStatusId() {
 		return statusId;
 	}
 
-	public void setStatusId( int status_id ) {
-		this.statusId = status_id;
+	public void setStatusId( ProviderStatus statusId ) {
+		this.statusId = statusId;
 	}
 
-	public ProviderStatus getStatus() {
-		return status;
-	}
-
-	public void setStatus( ProviderStatus status ) {
-		this.status = status;
-	}
-
-	public Set<ProviderUrl> getProviderFeedUri() {
-		return providerUrl;
-	}
-
-	public void setProviderFeedUri( Set<ProviderUrl> providerUrl ) {
-		this.providerUrl = providerUrl;
-	}
-
-	public Set<ProviderUrl> getProviderUrl() {
-		return providerUrl;
-	}
-
-	public void setProviderUrl( Set<ProviderUrl> providerUrl ) {
-		this.providerUrl = providerUrl;
-	}
+	// public Set<ProviderUrl> getProviderUrl() {
+	// return providerUrl;
+	// }
+	//
+	// public void setProviderUrl( Set<ProviderUrl> providerUrl ) {
+	// this.providerUrl = providerUrl;
+	// }
 
 	@Override
 	public String toString() {
