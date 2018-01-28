@@ -1,9 +1,13 @@
 package com.axisdesktop.crawler.entity;
 
+import java.util.Set;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
@@ -19,8 +23,8 @@ public class Provider extends SimpleEntity<Integer> {
 	@Column( name = "status_id", nullable = false )
 	private ProviderStatus statusId;
 
-	// @OneToMany( fetch = FetchType.LAZY, mappedBy = "providerId" )
-	// private Set<ProviderUrl> providerUrl;
+	@OneToMany( fetch = FetchType.LAZY, mappedBy = "providerId" )
+	private Set<ProviderUrl> providerUrl;
 
 	public Provider() {
 	}
@@ -38,17 +42,17 @@ public class Provider extends SimpleEntity<Integer> {
 		this.statusId = statusId;
 	}
 
-	// public Set<ProviderUrl> getProviderUrl() {
-	// return providerUrl;
-	// }
-	//
-	// public void setProviderUrl( Set<ProviderUrl> providerUrl ) {
-	// this.providerUrl = providerUrl;
-	// }
+	public Set<ProviderUrl> getProviderUrl() {
+		return providerUrl;
+	}
+
+	public void setProviderUrl( Set<ProviderUrl> providerUrl ) {
+		this.providerUrl = providerUrl;
+	}
 
 	@Override
 	public String toString() {
-		return "Provider [" + super.toString() + ", status_id=" + statusId + "]";
+		return "Provider [" + super.toString() + ", status_id=" + statusId.getName() + "]";
 	}
 
 }

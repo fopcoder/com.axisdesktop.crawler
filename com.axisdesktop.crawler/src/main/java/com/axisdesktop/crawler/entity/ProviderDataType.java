@@ -1,16 +1,30 @@
 package com.axisdesktop.crawler.entity;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
+public enum ProviderDataType {
+	PENDING(0, "pending"), //
+	FEED(1, "feed"), //
+	CATEGORY(2, "category"), //
+	ITEM(3, "item"), //
+	IMAGE(4, "image"), //
+	FILE(5, "file"), //
+	URL(6, "url"), //
+	COMMENT(7, "comment"), //
+	TAG(8, "tag");//
 
-import com.axisdesktop.base.db.entity.SimpleEntity;
+	private int id;
+	private String name;
 
-@Entity
-@Table( name = "provider_data_type" )
-
-public class ProviderDataType extends SimpleEntity<Integer> {
-	@Override
-	public String toString() {
-		return "ProviderDataType [" + super.toString() + " ]";
+	private ProviderDataType( int id, String name ) {
+		this.id = id;
+		this.name = name;
 	}
+
+	public int getId() {
+		return id;
+	}
+
+	public String getName() {
+		return name;
+	}
+
 }

@@ -6,10 +6,11 @@ import javax.persistence.Table;
 import com.axisdesktop.base.db.entity.SimpleEntity;
 
 @Entity
-@Table( name = "provider_status" )
-public class ProviderStatusOld extends SimpleEntity<Integer> {
+@Table( name = "provider_data_type" )
+
+public class ProviderDataTypeOld extends SimpleEntity<Integer> {
 	@Override
 	public String toString() {
-		return "ProviderStatusOld [" + super.toString() + " ]";
+		return "ProviderDataTypeOld [" + super.toString() + " ]";
 	}
 }

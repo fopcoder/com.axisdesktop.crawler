@@ -1,26 +1,19 @@
 package com.axisdesktop.crawler.entity;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.Lob;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
-import org.hibernate.annotations.Type;
-import org.hibernate.annotations.TypeDef;
-
 import com.axisdesktop.base.db.entity.BaseEntity;
-import com.axisdesktop.base.db.usertype.HstoreUserType;
 
 @Entity
 @Table( name = "provider_url" )
-@TypeDef( name = "hstore", typeClass = HstoreUserType.class )
+// @TypeDef( name = "hstore", typeClass = HstoreUserType.class )
 @NamedQueries( { @NamedQuery( name = "ProviderUrl.findActiveFeedUrl", //
 		query = "SELECT u FROM ProviderUrl u " //
 				+ "WHERE providerId = :providerId  AND typeId = 1 AND ( " //
@@ -30,38 +23,35 @@ import com.axisdesktop.base.db.usertype.HstoreUserType;
 		) } )
 
 public class ProviderUrl extends BaseEntity<Long> {
-
-	@Column( name = "provider_id" )
+	@Column( name = "provider_id", nullable = false )
 	private int providerId;
 
-	@ManyToOne( fetch = FetchType.LAZY )
-	@JoinColumn( name = "status_id", insertable = false, updatable = false )
-	private ProviderUrlStatus status;
+	@Column( name = "status_id", nullable = false )
+	private ProviderUrlStatus statusId;
 
-	@Column( name = "status_id" )
-	private int statusId;
+	@Column( name = "type_id", nullable = false )
+	private ProviderDataType typeId;
 
-	@ManyToOne( fetch = FetchType.LAZY )
-	@JoinColumn( name = "type_id", insertable = false, updatable = false )
-	private ProviderDataType type;
-
-	@Column( name = "type_id" )
-	private int typeId;
-
+	@Column( nullable = false )
 	private String url;
+
 	private String log;
 	private int tries;
 
-	@Column( name = "parent_id" )
+	@Column( name = "parent_id", nullable = false )
 	private Long parentId;
 
-	@Type( type = "hstore" )
-	private Map<String, Object> params = new HashMap<>();
+	@Lob
+	private String params;
 
 	public ProviderUrl() {
 	}
 
-	public ProviderUrl( int providerId, String url, int typeId, int statusId ) {
+	public ProviderUrl( int providerId, String url, ProviderDataType typeId ) {
+		this( providerId, url, typeId, ProviderUrlStatus.PENDING );
+	}
+
+	public ProviderUrl( int providerId, String url, ProviderDataType typeId, ProviderUrlStatus statusId ) {
 		this.providerId = providerId;
 		this.statusId = statusId;
 		this.typeId = typeId;
@@ -76,35 +66,19 @@ public class ProviderUrl extends BaseEntity<Long> {
 		this.providerId = providerId;
 	}
 
-	public ProviderUrlStatus getStatus() {
-		return status;
-	}
-
-	public void setStatus( ProviderUrlStatus status ) {
-		this.status = status;
-	}
-
-	public int getStatusId() {
+	public ProviderUrlStatus getStatusId() {
 		return statusId;
 	}
 
-	public void setStatusId( int statusId ) {
+	public void setStatusId( ProviderUrlStatus statusId ) {
 		this.statusId = statusId;
 	}
 
-	public ProviderDataType getType() {
-		return type;
-	}
-
-	public void setType( ProviderDataType type ) {
-		this.type = type;
-	}
-
-	public int getTypeId() {
+	public ProviderDataType getTypeId() {
 		return typeId;
 	}
 
-	public void setTypeId( int typeId ) {
+	public void setTypeId( ProviderDataType typeId ) {
 		this.typeId = typeId;
 	}
 
@@ -140,11 +114,11 @@ public class ProviderUrl extends BaseEntity<Long> {
 		this.parentId = parentId;
 	}
 
-	public Map<String, Object> getParams() {
+	public String getParams() {
 		return params;
 	}
 
-	public void setParams( Map<String, Object> params ) {
+	public void setParams( String params ) {
 		this.params = params;
 	}
 

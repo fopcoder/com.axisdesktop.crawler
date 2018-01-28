@@ -11,10 +11,8 @@ import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 
 import com.axisdesktop.crawler.entity.Provider;
-import com.axisdesktop.crawler.entity.ProviderDataType;
-import com.axisdesktop.crawler.entity.ProviderStatusOld;
+import com.axisdesktop.crawler.entity.ProviderDataTypeOld;
 import com.axisdesktop.crawler.entity.ProviderUrl;
-import com.axisdesktop.crawler.entity.ProviderUrlStatus;
 
 public abstract class Crawler {
 	private Properties properties;
@@ -30,10 +28,8 @@ public abstract class Crawler {
 				.setProperty( "hibernate.default_schema", props.getProperty( "db.schema", "" ) ) //
 				.setProperty( "hibernate.hbm2ddl.auto", props.getProperty( "hibernate.hbm2ddl.auto", "" ) ) //
 				.addAnnotatedClass( Provider.class ) //
-				// .addAnnotatedClass( ProviderStatusOld.class ) //
-				// .addAnnotatedClass( ProviderUrl.class ) //
-				// .addAnnotatedClass( ProviderUrlStatus.class ) //
-				// .addAnnotatedClass( ProviderDataType.class ) //
+				.addAnnotatedClass( ProviderUrl.class ) //
+				// .addAnnotatedClass( ProviderDataTypeOld.class ) //
 				.buildSessionFactory();
 		return this.factory;
 	}
