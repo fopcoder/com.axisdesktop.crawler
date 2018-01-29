@@ -15,36 +15,38 @@ import javax.persistence.UniqueConstraint;
 import com.axisdesktop.base.db.entity.BaseEntity;
 
 @Entity
-@Table(name = "provider_url", uniqueConstraints = {
-		@UniqueConstraint(columnNames = { "provider_id", "url" }, name = "uk_provider_url_provider_url") //
-})
+@Table( name = "provider_url", uniqueConstraints = {
+		@UniqueConstraint( columnNames = { "provider_id", "url" }, name = "uk_provider_url_provider_url" ) //
+} )
 // @TypeDef( name = "hstore", typeClass = HstoreUserType.class )
-@NamedQueries({ @NamedQuery(name = "ProviderUrl.findActiveFeedUrl", //
+@NamedQueries( { @NamedQuery( name = "ProviderUrl.findActiveFeedUrl", //
 		query = "SELECT u FROM ProviderUrl u " //
 				+ "WHERE providerId = :providerId  AND typeId = 1 AND ( " //
 				+ "( statusId = 1 AND modified < :nextTime ) OR " //
 				+ "statusId = 4 OR" //
 				+ "( statusId = 3 AND tries < :maxTries AND modified < :waitFor ) ) ) " //
-		) })
+		), //
+		@NamedQuery( name = "ProviderUrl.getByProviderAndUrl", query = "SELECT u FROM ProviderUrl u WHERE provider_id = :providerId AND url = :url" ) //
+} )
 
 public class ProviderUrl extends BaseEntity<Long> {
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "provider_id", nullable = false, foreignKey = @ForeignKey(name = "fk_providerurl_provider"))
+	@ManyToOne( fetch = FetchType.LAZY )
+	@JoinColumn( name = "provider_id", nullable = false, foreignKey = @ForeignKey( name = "fk_providerurl_provider" ) )
 	private Provider provider;
 
-	@Column(name = "status_id", nullable = false)
+	@Column( name = "status_id", nullable = false )
 	private ProviderUrlStatus statusId;
 
-	@Column(name = "type_id", nullable = false)
+	@Column( name = "type_id", nullable = false )
 	private ProviderDataType typeId;
 
-	@Column(nullable = false)
+	@Column( nullable = false, length = 4000 )
 	private String url;
 
 	private String log;
 	private int tries;
 
-	@Column(name = "parent_id", nullable = false)
+	@Column( name = "parent_id" )
 	private Long parentId;
 
 	@Lob
@@ -53,11 +55,11 @@ public class ProviderUrl extends BaseEntity<Long> {
 	public ProviderUrl() {
 	}
 
-	public ProviderUrl(Provider provider, String url, ProviderDataType typeId) {
-		this(provider, url, typeId, ProviderUrlStatus.PENDING);
+	public ProviderUrl( Provider provider, String url, ProviderDataType typeId ) {
+		this( provider, url, typeId, ProviderUrlStatus.PENDING );
 	}
 
-	public ProviderUrl(Provider provider, String url, ProviderDataType typeId, ProviderUrlStatus statusId) {
+	public ProviderUrl( Provider provider, String url, ProviderDataType typeId, ProviderUrlStatus statusId ) {
 		this.provider = provider;
 		this.statusId = statusId;
 		this.typeId = typeId;
@@ -68,7 +70,7 @@ public class ProviderUrl extends BaseEntity<Long> {
 		return provider;
 	}
 
-	public void setProvider(Provider provider) {
+	public void setProvider( Provider provider ) {
 		this.provider = provider;
 	}
 
@@ -76,7 +78,7 @@ public class ProviderUrl extends BaseEntity<Long> {
 		return statusId;
 	}
 
-	public void setStatusId(ProviderUrlStatus statusId) {
+	public void setStatusId( ProviderUrlStatus statusId ) {
 		this.statusId = statusId;
 	}
 
@@ -84,7 +86,7 @@ public class ProviderUrl extends BaseEntity<Long> {
 		return typeId;
 	}
 
-	public void setTypeId(ProviderDataType typeId) {
+	public void setTypeId( ProviderDataType typeId ) {
 		this.typeId = typeId;
 	}
 
@@ -92,7 +94,7 @@ public class ProviderUrl extends BaseEntity<Long> {
 		return url;
 	}
 
-	public void setUrl(String url) {
+	public void setUrl( String url ) {
 		this.url = url;
 	}
 
@@ -100,7 +102,7 @@ public class ProviderUrl extends BaseEntity<Long> {
 		return log;
 	}
 
-	public void setLog(String log) {
+	public void setLog( String log ) {
 		this.log = log;
 	}
 
@@ -108,7 +110,7 @@ public class ProviderUrl extends BaseEntity<Long> {
 		return tries;
 	}
 
-	public void setTries(int tries) {
+	public void setTries( int tries ) {
 		this.tries = tries;
 	}
 
@@ -116,7 +118,7 @@ public class ProviderUrl extends BaseEntity<Long> {
 		return parentId;
 	}
 
-	public void setParentId(Long parentId) {
+	public void setParentId( Long parentId ) {
 		this.parentId = parentId;
 	}
 
@@ -124,7 +126,7 @@ public class ProviderUrl extends BaseEntity<Long> {
 		return params;
 	}
 
-	public void setParams(String params) {
+	public void setParams( String params ) {
 		this.params = params;
 	}
 

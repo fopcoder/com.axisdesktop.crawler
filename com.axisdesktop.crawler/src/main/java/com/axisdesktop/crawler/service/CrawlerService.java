@@ -4,9 +4,9 @@ import java.io.Serializable;
 import java.util.List;
 
 public interface CrawlerService<T, ID extends Serializable> {
-	ID create(T obj);
+	T create(T obj);
 
-	T read(ID id);
+	T load(ID id);
 
 	void update(T obj);
 
