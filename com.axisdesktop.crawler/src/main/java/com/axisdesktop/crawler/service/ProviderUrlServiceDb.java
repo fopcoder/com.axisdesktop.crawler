@@ -94,7 +94,7 @@ public class ProviderUrlServiceDb extends ProviderUrlService {
 			query.setParameter( "providerId", purl.getProvider().getId() );
 			query.setParameter( "url", purl.getUrl() );
 			pu = query.getSingleResult();
-			pu.getProvider().getName();
+			// if( pu != null ) pu.getProvider().getName();
 
 			ses.close();
 		}

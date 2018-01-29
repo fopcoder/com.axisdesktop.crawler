@@ -2,13 +2,17 @@ package com.axisdesktop.crawler.impl;
 
 import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Stream;
 
 import org.h2.tools.Server;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
-import org.hibernate.query.Query;
 
 import com.axisdesktop.crawler.base.Crawler;
 import com.axisdesktop.crawler.base.Queue;
@@ -39,18 +43,10 @@ public class AxisCrawler extends Crawler {
 
 		Provider prov = provServ.createIfNotExists( "axisdesktop.com", ProviderStatus.ACTIVE );
 
-		ProviderUrl purl = new ProviderUrl( prov, "http://axisdesktop.com", ProviderDataType.FEED,
-				ProviderUrlStatus.DONE );
-
-		ProviderUrl u1 = urlServ.createIfNotExists( purl );
-
-		System.out.println( u1 );
-
-		// purl = new ProviderUrl( prov, "http://axisdesktop1.com", ProviderDataType.FEED, ProviderUrlStatus.DONE );
-		//
-		// u1 = urlServ.createIfNotExists( purl );
-		//
-		// System.out.println( u1 );
+		for( String u : importFeedUrls( "feed.urls" ) ) {
+			ProviderUrl purl = new ProviderUrl( prov, u, ProviderDataType.FEED, ProviderUrlStatus.PENDING );
+			urlServ.createIfNotExists( purl );
+		}
 
 		// this.queue = new AxisQueue();
 		// this.prod = new AxisProducer( queue );
@@ -58,21 +54,6 @@ public class AxisCrawler extends Crawler {
 
 		// this.session = this.getSessionFactory().openSession();
 		// Transaction tx = session.beginTransaction();
-		//
-		// Provider p = new Provider( "kokoko", ProviderStatus.ACTIVE );
-		// p.setName( "kokoko" );
-		// // session.save( p );
-		// this.session.persist( p );
-		//
-		// System.out.println( p.getId() );
-		//
-		// Provider p2 = this.getProviderByName( "kokoko" );
-		//
-		// System.out.println( p2.getId() );
-
-		// p = new Provider();
-		// p.setName( "kokoko" );
-		// session.persist( p );
 
 		// String sql = "SELECT * FROM {h-schema}provider";
 		// SQLQuery query = ses.createSQLQuery( sql );
@@ -108,6 +89,27 @@ public class AxisCrawler extends Crawler {
 		if( u != null ) System.out.println( "consumed: " + u.toString() );
 
 		return u;
+	}
+
+	public List<String> importFeedUrls( String fname ) {
+		List<String> l = new ArrayList<>();
+
+		try( Stream<String> stream = Files.lines( Paths.get( ClassLoader.getSystemResource( fname ).toURI() ) ) ) {
+			stream.forEach( line -> {
+				if( line != null && !line.isEmpty() ) {
+					l.add( line );
+				}
+			} );
+		}
+		catch( IOException e ) {
+			e.printStackTrace();
+		}
+		catch( URISyntaxException e1 ) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+
+		return l;
 	}
 
 	// public Provider getProviderByName( String name ) {
