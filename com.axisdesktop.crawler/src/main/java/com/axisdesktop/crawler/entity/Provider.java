@@ -23,7 +23,7 @@ public class Provider extends SimpleEntity<Integer> {
 	@Column( name = "status_id", nullable = false )
 	private ProviderStatus statusId;
 
-	@OneToMany( fetch = FetchType.LAZY, mappedBy = "providerId" )
+	@OneToMany( fetch = FetchType.LAZY, mappedBy = "provider" )
 	private Set<ProviderUrl> providerUrl;
 
 	public Provider() {
