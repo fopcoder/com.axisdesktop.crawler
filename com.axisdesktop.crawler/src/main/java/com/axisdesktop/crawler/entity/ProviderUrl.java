@@ -29,7 +29,7 @@ import com.axisdesktop.base.db.entity.BaseEntity;
 
 public class ProviderUrl extends BaseEntity<Long> {
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "provider_id", nullable = false)
+	@JoinColumn(name = "provider_id", nullable = false, foreignKey = @ForeignKey(name = "fk_providerurl_provider"))
 	private Provider provider;
 
 	@Column(name = "status_id", nullable = false)
