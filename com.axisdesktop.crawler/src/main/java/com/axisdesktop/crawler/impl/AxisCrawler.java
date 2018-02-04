@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import org.h2.tools.Server;
-import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 
 import com.axisdesktop.crawler.base.Crawler;
@@ -29,8 +28,8 @@ import com.axisdesktop.crawler.service.ProviderUrlServiceDb;
 
 public class AxisCrawler extends Crawler {
 	private Queue queue;
-	private AxisProducer prod;
-	private Session session;
+	// private AxisProducer prod;
+	// private Session session;
 
 	private final String propertiesFileName = "crawler.properties";
 
@@ -38,17 +37,17 @@ public class AxisCrawler extends Crawler {
 		this.loadProperties( this.propertiesFileName );
 		SessionFactory factory = this.buildSessionFactory( this.getProperties() );
 
-		ProviderService provServ = new ProviderServiceDb( factory );
-		ProviderUrlService urlServ = new ProviderUrlServiceDb( factory );
+		ProviderService provService = new ProviderServiceDb( factory );
+		ProviderUrlService urlService = new ProviderUrlServiceDb( factory );
 
-		Provider prov = provServ.createIfNotExists( "axisdesktop.com", ProviderStatus.ACTIVE );
+		Provider prov = provService.createIfNotExists( "axisdesktop.com", ProviderStatus.ACTIVE );
 
 		for( String u : importFeedUrls( "feed.urls" ) ) {
 			ProviderUrl purl = new ProviderUrl( prov, u, ProviderDataType.FEED, ProviderUrlStatus.PENDING );
-			urlServ.createIfNotExists( purl );
+			urlService.createIfNotExists( purl );
 		}
 
-		// this.queue = new AxisQueue();
+		this.queue = new DbQueue( prov, factory );
 		// this.prod = new AxisProducer( queue );
 		// this.prod.start();
 
@@ -84,14 +83,14 @@ public class AxisCrawler extends Crawler {
 	}
 
 	@Override
-	protected URI shiftURI() {
+	protected URI getNextURI() {
 		URI u = this.queue.get();
 		if( u != null ) System.out.println( "consumed: " + u.toString() );
 
 		return u;
 	}
 
-	public List<String> importFeedUrls( String fname ) {
+	private List<String> importFeedUrls( String fname ) {
 		List<String> l = new ArrayList<>();
 
 		try( Stream<String> stream = Files.lines( Paths.get( ClassLoader.getSystemResource( fname ).toURI() ) ) ) {
@@ -112,15 +111,4 @@ public class AxisCrawler extends Crawler {
 		return l;
 	}
 
-	// public Provider getProviderByName( String name ) {
-	// // Criteria criteria = this.session.createCriteria( Provider.class );
-	// // Provider p = (Provider)criteria.add( Restrictions.eq( "name", name ) ).uniqueResult();
-	// // this.getSessionFactory().getCurrentSession().
-	//
-	// Query<Provider> query = this.session.getNamedQuery( "Provider.getByName" );
-	// query.setParameter( "name", name );
-	// Provider p = query.getSingleResult();
-	//
-	// return p;
-	// }
 }

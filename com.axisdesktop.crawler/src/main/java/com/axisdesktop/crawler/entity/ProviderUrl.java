@@ -18,13 +18,22 @@ import com.axisdesktop.base.db.entity.BaseEntity;
 @Table( name = "provider_url", uniqueConstraints = {
 		@UniqueConstraint( columnNames = { "provider_id", "url" }, name = "uk_provider_url_provider_url" ) //
 } )
-// @TypeDef( name = "hstore", typeClass = HstoreUserType.class )
-@NamedQueries( { @NamedQuery( name = "ProviderUrl.findActiveFeedUrl", //
-		query = "SELECT u FROM ProviderUrl u " //
-				+ "WHERE providerId = :providerId  AND typeId = 1 AND ( " //
-				+ "( statusId = 1 AND modified < :nextTime ) OR " //
-				+ "statusId = 4 OR" //
-				+ "( statusId = 3 AND tries < :maxTries AND modified < :waitFor ) ) ) " //
+@NamedQueries( { @NamedQuery( name = "ProviderUrl.findActiveUrl", //
+		query = "SELECT u FROM ProviderUrl u " + //
+				"WHERE providerId = :providerId AND " + //
+				"	typeId = ProviderDataType.FEED AND (" + //
+				"		statusId IN( ProviderUrlStatus.PENDING, ProviderUrlStatus.UPDATE, ProviderUrlStatus.DONE ) OR "
+				+ //
+				"		( statusId = ProviderUrlStatus.ERROR AND tries < :maxTries )" + //
+				"	) AND modified < :nextTimeFeed" + //
+				"UNION " + //
+				"SELECT u FROM ProviderUrl u" + //
+				"WHERE providerId = :providerId AND " + //
+				"	typeId <> ProviderDataType.FEED AND (" + //
+				"		statusId IN( ProviderUrlStatus.PENDING, ProviderUrlStatus.UPDATE, ProviderUrlStatus.DONE ) OR "
+				+ //
+				"		( statusId = ProviderUrlStatus.ERROR AND tries < :maxTries ) " + //
+				"	) AND modified < :nextTimeItem )" //
 		), //
 		@NamedQuery( name = "ProviderUrl.getByProviderAndUrl", query = "SELECT u FROM ProviderUrl u WHERE provider_id = :providerId AND url = :url" ) //
 } )

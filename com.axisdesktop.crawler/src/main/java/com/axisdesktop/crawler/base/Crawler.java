@@ -11,7 +11,6 @@ import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 
 import com.axisdesktop.crawler.entity.Provider;
-import com.axisdesktop.crawler.entity.ProviderDataTypeOld;
 import com.axisdesktop.crawler.entity.ProviderUrl;
 
 public abstract class Crawler {
@@ -29,7 +28,6 @@ public abstract class Crawler {
 				.setProperty( "hibernate.hbm2ddl.auto", props.getProperty( "hibernate.hbm2ddl.auto", "" ) ) //
 				.addAnnotatedClass( Provider.class ) //
 				.addAnnotatedClass( ProviderUrl.class ) //
-				// .addAnnotatedClass( ProviderDataTypeOld.class ) //
 				.buildSessionFactory();
 		return this.factory;
 	}
@@ -53,7 +51,7 @@ public abstract class Crawler {
 
 	protected abstract Worker createWorker( URI uri );
 
-	protected abstract URI shiftURI();
+	protected abstract URI getNextURI();
 
 	protected void shutdown() {
 		this.factory.close();
@@ -61,10 +59,10 @@ public abstract class Crawler {
 
 	public void run() {
 		ExecutorService exec = Executors
-				.newFixedThreadPool( Integer.parseInt( this.properties.getProperty( "crawler.threads", "5" ) ) );
+				.newFixedThreadPool( Integer.parseInt( this.getProperties().getProperty( "crawler.threads", "5" ) ) );
 
 		URI uri;
-		while( ( uri = this.shiftURI() ) != null ) {
+		while( ( uri = this.getNextURI() ) != null ) {
 			Worker worker = this.createWorker( uri );
 			exec.execute( worker );
 		}
