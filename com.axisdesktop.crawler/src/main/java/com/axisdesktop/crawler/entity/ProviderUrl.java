@@ -18,23 +18,22 @@ import com.axisdesktop.base.db.entity.BaseEntity;
 @Table( name = "provider_url", uniqueConstraints = {
 		@UniqueConstraint( columnNames = { "provider_id", "url" }, name = "uk_provider_url_provider_url" ) //
 } )
-@NamedQueries( { @NamedQuery( name = "ProviderUrl.findActiveUrl", //
-		query = "SELECT u FROM ProviderUrl u " + //
-				"WHERE providerId = :providerId AND " + //
-				"	typeId = ProviderDataType.FEED AND (" + //
-				"		statusId IN( ProviderUrlStatus.PENDING, ProviderUrlStatus.UPDATE, ProviderUrlStatus.DONE ) OR "
-				+ //
-				"		( statusId = ProviderUrlStatus.ERROR AND tries < :maxTries )" + //
-				"	) AND modified < :nextTimeFeed" + //
-				"UNION " + //
-				"SELECT u FROM ProviderUrl u" + //
-				"WHERE providerId = :providerId AND " + //
-				"	typeId <> ProviderDataType.FEED AND (" + //
-				"		statusId IN( ProviderUrlStatus.PENDING, ProviderUrlStatus.UPDATE, ProviderUrlStatus.DONE ) OR "
-				+ //
-				"		( statusId = ProviderUrlStatus.ERROR AND tries < :maxTries ) " + //
-				"	) AND modified < :nextTimeItem )" //
-		), //
+@NamedQueries( { //
+		// @NamedQuery( name = "ProviderUrl.findActiveUrl", //
+		// query = "SELECT u FROM ProviderUrl u " + //
+		// "WHERE providerId = :providerId AND " + //
+		// " typeId = ProviderDataType.FEED AND (" + //
+		// " status IN( ProviderUrlStatus.PENDING, ProviderUrlStatus.UPDATE, ProviderUrlStatus.DONE ) OR " + //
+		// " ( status = ProviderUrlStatus.ERROR AND tries < :maxTries )" + //
+		// " ) AND modified < :nextTimeFeed" + //
+		// "UNION " + //
+		// "SELECT u1 FROM ProviderUrl u1" + //
+		// "WHERE providerId = :providerId AND " + //
+		// " typeId <> ProviderDataType.FEED AND (" + //
+		// " status IN( ProviderUrlStatus.PENDING, ProviderUrlStatus.UPDATE, ProviderUrlStatus.DONE ) OR " + //
+		// " ( status = ProviderUrlStatus.ERROR AND tries < :maxTries ) " + //
+		// " ) AND modified < :nextTimeItem )" //
+		// ), //
 		@NamedQuery( name = "ProviderUrl.getByProviderAndUrl", query = "SELECT u FROM ProviderUrl u WHERE provider_id = :providerId AND url = :url" ) //
 } )
 
@@ -44,7 +43,7 @@ public class ProviderUrl extends BaseEntity<Long> {
 	private Provider provider;
 
 	@Column( name = "status_id", nullable = false )
-	private ProviderUrlStatus statusId;
+	private ProviderUrlStatus status;
 
 	@Column( name = "type_id", nullable = false )
 	private ProviderDataType typeId;
@@ -70,7 +69,7 @@ public class ProviderUrl extends BaseEntity<Long> {
 
 	public ProviderUrl( Provider provider, String url, ProviderDataType typeId, ProviderUrlStatus statusId ) {
 		this.provider = provider;
-		this.statusId = statusId;
+		this.status = statusId;
 		this.typeId = typeId;
 		this.url = url;
 	}
@@ -84,11 +83,11 @@ public class ProviderUrl extends BaseEntity<Long> {
 	}
 
 	public ProviderUrlStatus getStatusId() {
-		return statusId;
+		return status;
 	}
 
 	public void setStatusId( ProviderUrlStatus statusId ) {
-		this.statusId = statusId;
+		this.status = statusId;
 	}
 
 	public ProviderDataType getTypeId() {
@@ -141,7 +140,7 @@ public class ProviderUrl extends BaseEntity<Long> {
 
 	@Override
 	public String toString() {
-		return "ProviderUrl [" + super.toString() + ", provider=" + provider + ", statusId=" + statusId + ", typeId="
+		return "ProviderUrl [" + super.toString() + ", provider=" + provider + ", status=" + status + ", typeId="
 				+ typeId + ", url=" + url + ", log=" + log + ", tries=" + tries + ", parentId=" + parentId + ", params="
 				+ params + "]";
 	}

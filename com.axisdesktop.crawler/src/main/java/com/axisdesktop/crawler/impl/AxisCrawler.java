@@ -16,6 +16,7 @@ import org.hibernate.SessionFactory;
 import com.axisdesktop.crawler.base.Crawler;
 import com.axisdesktop.crawler.base.Queue;
 import com.axisdesktop.crawler.base.Worker;
+import com.axisdesktop.crawler.entity.CrawlerProxy;
 import com.axisdesktop.crawler.entity.Provider;
 import com.axisdesktop.crawler.entity.ProviderDataType;
 import com.axisdesktop.crawler.entity.ProviderStatus;
@@ -47,7 +48,11 @@ public class AxisCrawler extends Crawler {
 			urlService.createIfNotExists( purl );
 		}
 
-		this.queue = new DbQueue( prov, factory );
+		for( CrawlerProxy p : importProxy( "proxy.list" ) ) {
+			System.out.println( p );
+		}
+
+		// this.queue = new DbQueue( prov, factory );
 		// this.prod = new AxisProducer( queue );
 		// this.prod.start();
 
@@ -106,6 +111,30 @@ public class AxisCrawler extends Crawler {
 		catch( URISyntaxException e1 ) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
+		}
+
+		return l;
+	}
+
+	private List<CrawlerProxy> importProxy( String fname ) {
+		List<CrawlerProxy> l = new ArrayList<>();
+
+		try( Stream<String> stream = Files.lines( Paths.get( ClassLoader.getSystemResource( fname ).toURI() ) ) ) {
+			stream.forEach( line -> {
+				if( line != null && !line.isEmpty() ) {
+					String[] dd = line.split( ":" );
+					CrawlerProxy p = new CrawlerProxy( dd[0], Integer.valueOf( dd[1] ) );
+					l.add( p );
+				}
+			} );
+		}
+		catch( IOException e ) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		catch( URISyntaxException e ) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 
 		return l;

@@ -10,6 +10,7 @@ import java.util.concurrent.Executors;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 
+import com.axisdesktop.crawler.entity.CrawlerProxy;
 import com.axisdesktop.crawler.entity.Provider;
 import com.axisdesktop.crawler.entity.ProviderUrl;
 
@@ -28,6 +29,7 @@ public abstract class Crawler {
 				.setProperty( "hibernate.hbm2ddl.auto", props.getProperty( "hibernate.hbm2ddl.auto", "" ) ) //
 				.addAnnotatedClass( Provider.class ) //
 				.addAnnotatedClass( ProviderUrl.class ) //
+				.addAnnotatedClass( CrawlerProxy.class ) //
 				.buildSessionFactory();
 		return this.factory;
 	}
