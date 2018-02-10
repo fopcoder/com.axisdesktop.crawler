@@ -19,23 +19,48 @@ import com.axisdesktop.base.db.entity.BaseEntity;
 		@UniqueConstraint( columnNames = { "provider_id", "url" }, name = "uk_provider_url_provider_url" ) //
 } )
 @NamedQueries( { //
-		// @NamedQuery( name = "ProviderUrl.findActiveUrl", //
-		// query = "SELECT u FROM ProviderUrl u " + //
-		// "WHERE providerId = :providerId AND " + //
-		// " typeId = ProviderDataType.FEED AND (" + //
-		// " status IN( ProviderUrlStatus.PENDING, ProviderUrlStatus.UPDATE, ProviderUrlStatus.DONE ) OR " + //
-		// " ( status = ProviderUrlStatus.ERROR AND tries < :maxTries )" + //
-		// " ) AND modified < :nextTimeFeed" + //
-		// "UNION " + //
-		// "SELECT u1 FROM ProviderUrl u1" + //
-		// "WHERE providerId = :providerId AND " + //
-		// " typeId <> ProviderDataType.FEED AND (" + //
-		// " status IN( ProviderUrlStatus.PENDING, ProviderUrlStatus.UPDATE, ProviderUrlStatus.DONE ) OR " + //
-		// " ( status = ProviderUrlStatus.ERROR AND tries < :maxTries ) " + //
-		// " ) AND modified < :nextTimeItem )" //
-		// ), //
+		@NamedQuery( name = "ProviderUrl.findActiveUrl", //
+				query = "SELECT u FROM ProviderUrl u " + //
+						"WHERE provider_id = :providerId AND (" + //
+						"	typeId = com.axisdesktop.crawler.entity.ProviderDataType.FEED AND (" + //
+						"		status IN( com.axisdesktop.crawler.entity.ProviderUrlStatus.PENDING, com.axisdesktop.crawler.entity.ProviderUrlStatus.UPDATE, com.axisdesktop.crawler.entity.ProviderUrlStatus.DONE ) OR "
+						+ //
+						"		( status = com.axisdesktop.crawler.entity.ProviderUrlStatus.ERROR AND tries < :maxTries ) "
+						+ //
+						"	) AND modified < :nextTimeFeed " + //
+						"	OR " + //
+						"	typeId <> com.axisdesktop.crawler.entity.ProviderDataType.FEED AND (" + //
+						"		status IN( com.axisdesktop.crawler.entity.ProviderUrlStatus.PENDING, com.axisdesktop.crawler.entity.ProviderUrlStatus.UPDATE, com.axisdesktop.crawler.entity.ProviderUrlStatus.DONE ) OR "
+						+ //
+						"		( status = com.axisdesktop.crawler.entity.ProviderUrlStatus.ERROR AND tries < :maxTries ) "
+						+ //
+						"	) AND modified < :nextTimeItem" + //
+						"	)" //
+		), //
 		@NamedQuery( name = "ProviderUrl.getByProviderAndUrl", query = "SELECT u FROM ProviderUrl u WHERE provider_id = :providerId AND url = :url" ) //
 } )
+
+/*
+// @formatter:off
+ 
+ 
+SELECT u FROM ProviderUrl u
+WHERE providerId = :providerId AND (
+	typeId = ProviderDataType.FEED AND (
+		status IN( ProviderUrlStatus.PENDING, ProviderUrlStatus.UPDATE, ProviderUrlStatus.DONE ) OR 
+		( status = ProviderUrlStatus.ERROR AND tries < :maxTries ) 
+	) AND 
+	modified < :nextTimeFeed 
+	OR
+	typeId <> ProviderDataType.FEED AND (
+		status IN( ProviderUrlStatus.PENDING, ProviderUrlStatus.UPDATE, ProviderUrlStatus.DONE ) OR 
+		( status = ProviderUrlStatus.ERROR AND tries < :maxTries ) 
+	) AND 
+	modified < :nextTimeItem
+	)
+
+// @formatter:on  
+ */
 
 public class ProviderUrl extends BaseEntity<Long> {
 	@ManyToOne( fetch = FetchType.LAZY )

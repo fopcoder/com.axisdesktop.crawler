@@ -22,6 +22,8 @@ import com.axisdesktop.crawler.entity.ProviderDataType;
 import com.axisdesktop.crawler.entity.ProviderStatus;
 import com.axisdesktop.crawler.entity.ProviderUrl;
 import com.axisdesktop.crawler.entity.ProviderUrlStatus;
+import com.axisdesktop.crawler.service.CrawlerProxyService;
+import com.axisdesktop.crawler.service.CrawlerProxyServiceDb;
 import com.axisdesktop.crawler.service.ProviderService;
 import com.axisdesktop.crawler.service.ProviderServiceDb;
 import com.axisdesktop.crawler.service.ProviderUrlService;
@@ -40,6 +42,7 @@ public class AxisCrawler extends Crawler {
 
 		ProviderService provService = new ProviderServiceDb( factory );
 		ProviderUrlService urlService = new ProviderUrlServiceDb( factory );
+		CrawlerProxyService crawlerService = new CrawlerProxyServiceDb( factory );
 
 		Provider prov = provService.createIfNotExists( "axisdesktop.com", ProviderStatus.ACTIVE );
 
@@ -49,10 +52,10 @@ public class AxisCrawler extends Crawler {
 		}
 
 		for( CrawlerProxy p : importProxy( "proxy.list" ) ) {
-			System.out.println( p );
+			crawlerService.createIfNotExists( p );
 		}
 
-		// this.queue = new DbQueue( prov, factory );
+		this.queue = new DbQueue( prov, factory );
 		// this.prod = new AxisProducer( queue );
 		// this.prod.start();
 
@@ -71,15 +74,8 @@ public class AxisCrawler extends Crawler {
 
 		// tx.commit();
 		// this.session.close();
-		this.getSessionFactory().close();
+		// this.getSessionFactory().close();
 
-		try {
-			Server server = Server.createWebServer( "-web" ).start();
-		}
-		catch( SQLException e ) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 	}
 
 	@Override
@@ -138,6 +134,10 @@ public class AxisCrawler extends Crawler {
 		}
 
 		return l;
+	}
+
+	public Queue getQueue() {
+		return this.queue;
 	}
 
 }

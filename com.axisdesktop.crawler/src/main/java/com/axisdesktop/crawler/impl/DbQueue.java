@@ -1,6 +1,8 @@
 package com.axisdesktop.crawler.impl;
 
 import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 
@@ -12,11 +14,12 @@ import org.hibernate.query.Query;
 import com.axisdesktop.crawler.base.Queue;
 import com.axisdesktop.crawler.entity.Provider;
 import com.axisdesktop.crawler.entity.ProviderUrl;
+import com.axisdesktop.crawler.entity.ProviderUrlStatus;
 import com.axisdesktop.crawler.service.ProviderUrlService;
 import com.axisdesktop.crawler.service.ProviderUrlServiceDb;
 
 public class DbQueue implements Queue {
-	private boolean available = false;
+	private boolean available = true;
 	private Map<URI, Integer> urls;
 	private SessionFactory factory;
 	private Provider provider;
@@ -41,34 +44,42 @@ public class DbQueue implements Queue {
 
 		ProviderUrlService pService = new ProviderUrlServiceDb( factory );
 
-		URI uri;
-
 		Session ses = factory.openSession();
 		Transaction tx = ses.beginTransaction();
 
-		ses.createNamedQuery( "ProviderUrl.ProviderUrl.findActiveUrl" );
+		// ses.createNamedQuery( "ProviderUrl.ProviderUrl.findActiveUrl" );
+		Calendar cal = Calendar.getInstance();
+		cal.set( 2019, 1, 1 );
 
 		Query<ProviderUrl> query = ses.getNamedQuery( "ProviderUrl.findActiveUrl" );
 		query.setParameter( "providerId", provider.getId() );
 		query.setParameter( "maxTries", 15 );
-		// query.setParameter( "nextTimeFeed", );
-		// query.setParameter( "nextTimeItem", );
-		// pu = query.getSingleResult();
+		query.setParameter( "nextTimeFeed", cal );
+		query.setParameter( "nextTimeItem", cal );
+		ProviderUrl pu = query.getSingleResult();
+
+		pu.setStatusId( ProviderUrlStatus.PROCESS );
+		pu.setModified( Calendar.getInstance() );
+
+		ses.save( pu );
 
 		tx.commit();
 		ses.close();
 
-		for( Map.Entry<URI, Integer> qe : urls.entrySet() ) {
-			if( qe.getValue() == 0 ) {
-				qe.setValue( 2 );
-				return qe.getKey();
-			}
-		}
-
 		available = false;
 		notifyAll();
 
-		return null;
+		URI uri = null;
+
+		try {
+			uri = new URI( pu.getUrl() );
+		}
+		catch( URISyntaxException e ) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return uri;
 	}
 
 	@Override

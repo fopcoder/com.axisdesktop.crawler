@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 
 import com.axisdesktop.crawler.entity.CrawlerProxy;
@@ -25,9 +26,16 @@ public class CrawlerProxyServiceDb extends CrawlerProxyService {
 	}
 
 	@Override
-	public CrawlerProxy create( CrawlerProxy obj ) {
-		// TODO Auto-generated method stub
-		return null;
+	public CrawlerProxy create( CrawlerProxy proxy ) {
+		Session ses = getFactory().openSession();
+		Transaction tx = ses.beginTransaction();
+
+		ses.persist( proxy );
+
+		tx.commit();
+		ses.close();
+
+		return proxy;
 	}
 
 	@Override
@@ -102,6 +110,11 @@ public class CrawlerProxyServiceDb extends CrawlerProxyService {
 		}
 
 		return p;
+	}
+
+	@Override
+	public CrawlerProxy createIfNotExists( CrawlerProxy proxy ) {
+		return createIfNotExists( proxy.getHost(), proxy.getPort() );
 	}
 
 }

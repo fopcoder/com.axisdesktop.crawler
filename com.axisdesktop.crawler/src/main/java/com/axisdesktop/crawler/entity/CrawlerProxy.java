@@ -15,8 +15,8 @@ import com.axisdesktop.base.db.entity.BaseEntity;
 } )
 
 @NamedQueries( {
-		@NamedQuery( name = "CrawlerProxy.getByHostAndPort", query = "SELECT p FROM CrawlerProxy p WHERE host = :host AND port = :port" )//
-} )
+		@NamedQuery( name = "CrawlerProxy.getByHostAndPort", query = "SELECT p FROM CrawlerProxy p WHERE host = :host AND port = :port" ), //
+		@NamedQuery( name = "CrawlerProxy.getActive", query = "SELECT p FROM CrawlerProxy p WHERE status = com.axisdesktop.crawler.entity.CrawlerProxyStatus.ACTIVE" ) } )
 
 public class CrawlerProxy extends BaseEntity<Integer> {
 	@Column( nullable = false )
@@ -60,8 +60,12 @@ public class CrawlerProxy extends BaseEntity<Integer> {
 		this.port = port;
 	}
 
-	public void setStatusId( CrawlerProxyStatus statusId ) {
-		this.status = statusId;
+	public void setStatus( CrawlerProxyStatus status ) {
+		this.status = status;
+	}
+
+	public CrawlerProxyStatus getStatus() {
+		return status;
 	}
 
 	public String getUser() {

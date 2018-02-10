@@ -1,7 +1,7 @@
 package com.axisdesktop.crawler.entity;
 
 public enum CrawlerProxyStatus {
-	ACTIVE(0, "pending"), //
+	ACTIVE(0, "active"), //
 	ERROR(1, "error"), //
 	INACTIVE(2, "inactive"), //
 	DELETED(3, "deleted");
