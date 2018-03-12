@@ -2,18 +2,27 @@ package com.axisdesktop.crawler.entity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
 import com.axisdesktop.base.db.entity.BaseEntity;
 
 @Entity
-@Table( name = "proxy" )
+@Table( name = "proxy", uniqueConstraints = {
+		@UniqueConstraint( columnNames = { "host", "port" }, name = "uk_proxy_host_port" )//
+} )
+
+@NamedQueries( {
+		@NamedQuery( name = "CrawlerProxy.getByHostAndPort", query = "SELECT p FROM CrawlerProxy p WHERE host = :host AND port = :port" ), //
+		@NamedQuery( name = "CrawlerProxy.getActive", query = "SELECT p FROM CrawlerProxy p WHERE status = com.axisdesktop.crawler.entity.CrawlerProxyStatus.ACTIVE" ) } )
 
 public class CrawlerProxy extends BaseEntity<Integer> {
+	@Column( nullable = false )
 	private String host;
+
+	@Column( nullable = false )
 	private int port;
 
 	@Column( name = "`user`" )
@@ -23,12 +32,8 @@ public class CrawlerProxy extends BaseEntity<Integer> {
 	private String log;
 	private int tries;
 
-	@ManyToOne( fetch = FetchType.LAZY )
-	@JoinColumn( name = "status_id", insertable = false, updatable = false )
-	private CrawlerProxyStatus crawlerProxyStatus;
-
 	@Column( name = "status_id" )
-	private int statusId;
+	private CrawlerProxyStatus status;
 
 	public CrawlerProxy() {
 	}
@@ -36,7 +41,7 @@ public class CrawlerProxy extends BaseEntity<Integer> {
 	public CrawlerProxy( String host, int port ) {
 		this.host = host;
 		this.port = port;
-		this.statusId = 1;
+		this.status = CrawlerProxyStatus.ACTIVE;
 	}
 
 	public String getHost() {
@@ -55,12 +60,12 @@ public class CrawlerProxy extends BaseEntity<Integer> {
 		this.port = port;
 	}
 
-	public CrawlerProxyStatus getCrawlerProxyStatus() {
-		return crawlerProxyStatus;
+	public void setStatus( CrawlerProxyStatus status ) {
+		this.status = status;
 	}
 
-	public void setCrawlerProxyStatus( CrawlerProxyStatus crawlerProxyStatus ) {
-		this.crawlerProxyStatus = crawlerProxyStatus;
+	public CrawlerProxyStatus getStatus() {
+		return status;
 	}
 
 	public String getUser() {
@@ -77,14 +82,6 @@ public class CrawlerProxy extends BaseEntity<Integer> {
 
 	public void setPassword( String password ) {
 		this.password = password;
-	}
-
-	public int getStatusId() {
-		return statusId;
-	}
-
-	public void setStatusId( int status_id ) {
-		this.statusId = status_id;
 	}
 
 	public String getLog() {
@@ -106,6 +103,7 @@ public class CrawlerProxy extends BaseEntity<Integer> {
 	@Override
 	public String toString() {
 		return "CrawlerProxy [" + super.toString() + ", host=" + host + ", port=" + port + ", user=" + user
-				+ ", password=" + password + ", log=" + log + ", status_id=" + statusId + ", tries=" + tries + "]";
+				+ ", password=" + password + ", log=" + log + ", status_id=" + status.getName() + ", tries=" + tries
+				+ "]";
 	}
 }

@@ -1,15 +1,24 @@
 package com.axisdesktop.crawler.entity;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
+public enum ProviderStatus {
+	PENDING(0, "pending"), //
+	ACTIVE(1, "active"), //
+	INACTIVE(2, "inactive"), //
+	DELETED(3, "deleted");
 
-import com.axisdesktop.base.db.entity.SimpleEntity;
+	private int id;
+	private String name;
 
-@Entity
-@Table( name = "provider_status" )
-public class ProviderStatus extends SimpleEntity<Integer> {
-	@Override
-	public String toString() {
-		return "ProviderStatus [" + super.toString() + " ]";
+	private ProviderStatus(int statusId, String name) {
+		this.id = statusId;
+		this.name = name;
+	}
+
+	public int getId() {
+		return id;
+	}
+
+	public String getName() {
+		return name;
 	}
 }

@@ -1,16 +1,24 @@
 package com.axisdesktop.crawler.entity;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
+public enum CrawlerProxyStatus {
+	ACTIVE(0, "active"), //
+	ERROR(1, "error"), //
+	INACTIVE(2, "inactive"), //
+	DELETED(3, "deleted");
 
-import com.axisdesktop.base.db.entity.SimpleEntity;
+	private int id;
+	private String name;
 
-@Entity
-@Table( name = "proxy_status", schema = "crawler" )
+	private CrawlerProxyStatus( int id, String name ) {
+		this.id = id;
+		this.name = name;
+	}
 
-public class CrawlerProxyStatus extends SimpleEntity<Integer> {
-	@Override
-	public String toString() {
-		return "CrawlerProxyStatus [ " + super.toString() + " ]";
+	public int getId() {
+		return id;
+	}
+
+	public String getName() {
+		return name;
 	}
 }
