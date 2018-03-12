@@ -139,6 +139,7 @@ public class CrawlerProxyServiceDb extends CrawlerProxyService {
 					ses.persist( crawlerProxy );
 					tx.commit();
 
+					crawlerProxy = null;
 					continue;
 				}
 
@@ -147,7 +148,9 @@ public class CrawlerProxyServiceDb extends CrawlerProxyService {
 
 			ses.close();
 		}
-		catch( Exception e ) {} ;
+		catch( Exception e ) {
+			crawlerProxy = null;
+		} ;
 
 		return crawlerProxy;
 	}
@@ -161,23 +164,8 @@ public class CrawlerProxyServiceDb extends CrawlerProxyService {
 					new InetSocketAddress( crawlerProxy.getHost(), crawlerProxy.getPort() ) );
 
 			conn = CrawlerProxyService.getConnection( proxy, new URL( "https://google.com" ), null, null, null );
+			conn.getInputStream().close();
 
-			// URL url = new URL( "https://google.com" );
-
-			// urlConnection = (HttpURLConnection)url.openConnection( proxy );
-			// urlConnection.setRequestMethod( "HEAD" );
-			// urlConnection.setRequestProperty( "User-Agent",
-			// "Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/49.0.2623.87
-			// Safari/537.36" );
-			// System.setProperty( "http.keepAlive", "false" );
-			// urlConnection.setConnectTimeout( 10_000 );
-
-			conn.getInputStream().close();;
-
-			// urlConnection.getInputStream().close();
-			// System.out.println( conn.getResponseCode() );
-
-			// is.close();
 			res = true;
 		}
 		catch( IOException e ) {

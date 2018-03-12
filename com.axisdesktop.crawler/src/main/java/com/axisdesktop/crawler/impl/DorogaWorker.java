@@ -48,6 +48,9 @@ public class DorogaWorker implements Worker {
 		// System.out.println( crawlerProxy );
 
 		if( crawlerProxy != null ) {
+			System.out
+					.println( String.format( "proxy found: [%d] %s", crawlerProxy.getId(), crawlerProxy.hostport() ) );
+
 			try {
 				Proxy proxy = new Proxy( Proxy.Type.HTTP,
 						new InetSocketAddress( crawlerProxy.getHost(), crawlerProxy.getPort() ) );

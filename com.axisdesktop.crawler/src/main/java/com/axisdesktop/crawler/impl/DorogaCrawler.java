@@ -95,7 +95,7 @@ public class DorogaCrawler extends Crawler {
 
 		try( Stream<String> stream = Files.lines( Paths.get( ClassLoader.getSystemResource( fname ).toURI() ) ) ) {
 			stream.forEach( line -> {
-				if( line != null && !line.isEmpty() ) {
+				if( line != null && !line.isEmpty() && !line.startsWith( "#" ) ) {
 					l.add( line );
 				}
 			} );

@@ -31,7 +31,7 @@ public abstract class CrawlerProxyService implements CrawlerService<CrawlerProxy
 			conn = (HttpURLConnection)url.openConnection( proxy );
 		}
 
-		conn.setConnectTimeout( Integer.valueOf( params.getOrDefault( "timeout", "10000" ) ) );
+		conn.setConnectTimeout( Integer.valueOf( params.getOrDefault( "timeout", "15000" ) ) );
 
 		if( headers != null ) {
 			for( Map.Entry<String, String> param : headers.entrySet() ) {

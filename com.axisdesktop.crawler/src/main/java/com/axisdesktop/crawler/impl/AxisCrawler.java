@@ -45,6 +45,7 @@ public class AxisCrawler extends Crawler {
 		Provider prov = provService.createIfNotExists( "axisdesktop.com", ProviderStatus.ACTIVE );
 
 		for( String u : importFeedUrls( "feed.urls" ) ) {
+
 			ProviderUrl purl = new ProviderUrl( prov, u, ProviderDataType.FEED, ProviderUrlStatus.PENDING );
 			urlService.createIfNotExists( purl );
 		}
@@ -95,7 +96,7 @@ public class AxisCrawler extends Crawler {
 
 		try( Stream<String> stream = Files.lines( Paths.get( ClassLoader.getSystemResource( fname ).toURI() ) ) ) {
 			stream.forEach( line -> {
-				if( line != null && !line.isEmpty() ) {
+				if( line != null && !line.isEmpty() && !line.startsWith( "#" ) ) {
 					l.add( line );
 				}
 			} );

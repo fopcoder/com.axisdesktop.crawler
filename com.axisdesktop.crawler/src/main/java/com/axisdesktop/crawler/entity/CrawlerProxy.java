@@ -100,6 +100,15 @@ public class CrawlerProxy extends BaseEntity<Integer> {
 		this.tries = tries;
 	}
 
+	public String hostport() {
+		return hostport( ":" );
+	}
+
+	public String hostport( String sep ) {
+		if( sep == null ) sep = ":";
+		return host + sep + port;
+	}
+
 	@Override
 	public String toString() {
 		return "CrawlerProxy [" + super.toString() + ", host=" + host + ", port=" + port + ", user=" + user
