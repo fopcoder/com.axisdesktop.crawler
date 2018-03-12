@@ -19,11 +19,11 @@ import com.axisdesktop.crawler.entity.CrawlerProxy;
 import com.axisdesktop.crawler.service.CrawlerProxyService;
 import com.axisdesktop.crawler.service.CrawlerProxyServiceDb;
 
-public class AxisWorker implements Worker {
+public class DorogaWorker implements Worker {
 	private Crawler crawler;
 	private URI uri;
 
-	public AxisWorker( Crawler crawler, URI uri ) {
+	public DorogaWorker( Crawler crawler, URI uri ) {
 		if( crawler == null ) throw new IllegalArgumentException( "Carwler is null" );
 		if( uri == null ) throw new IllegalArgumentException( "URI is null" );
 
